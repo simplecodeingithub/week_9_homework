@@ -101,6 +101,10 @@ CREATE TABLE FinesTable (
    FOREIGN KEY (BorrowID) REFERENCES BorrowingBooks(BorrowID) ON DELETE CASCADE
 );
 
+ALTER TABLE FinesTable
+ADD COLUMN FineStatus ENUM('unpaid', 'paid') DEFAULT 'unpaid',
+ADD COLUMN PaymentDate DATE;
+
 -- Modify return_date to allow NULL values
 ALTER TABLE FinesTable
 MODIFY COLUMN return_date DATE DEFAULT NULL;
