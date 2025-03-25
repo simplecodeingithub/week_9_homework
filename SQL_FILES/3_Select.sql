@@ -29,6 +29,12 @@ from BorrowingBooks;
 
 select *
 from FinesTable;
+
+
+
+
+SELECT * 
+FROM Notifications;
 --------------------
 
 SELECT * 
@@ -38,11 +44,12 @@ WHERE UserID IN (1, 4, 5, 6);
 SELECT firstname,lastname
 from LibraryUsers;
 
+-- where - filters select users who joined on give date
 select firstname, lastname ,email
 from LibraryUsers
 where joindate = '2024-06-15';
 
--- query to display lastname and their count which appears more than once ,group by lastname and having count greater than 1
+-- Count the number of users with the same lastname (which appear more than once)
 select lastname as Surname,
 	count(*) as count_of_lastname
 from LibraryUsers
@@ -60,26 +67,43 @@ FROM Address
 group by City
 order by TotalUsers asc;
 
--- Joins
+-- Join LibraryUsers table with Address table to get address details
 select lu.firstname, lu.lastname, a.flatNo, a.street, a.city, a.postalcode 
 from LibraryUsers as lu
-left join Address as a on lu.UserID = a.UserId; 
+right outer join Address as a on lu.UserID = a.UserId;
+
+-- get the user who is having more than one address
+SELECT lu.firstname, lu.lastname, COUNT(a.AddressID) AS AddressCount
+FROM LibraryUsers AS lu
+LEFT JOIN Address AS a ON lu.UserID = a.UserID
+GROUP BY lu.UserID, lu.firstname, lu.lastname
+HAVING COUNT(a.AddressID) > 1
+ORDER BY AddressCount DESC;
+
+-- Grouping by User to show only distinct users, even if they have multiple addresses
+SELECT lu.firstname, lu.lastname, COUNT(a.addressID) AS NumberOfAddresses
+FROM LibraryUsers AS lu
+RIGHT OUTER JOIN Address AS a ON lu.UserID = a.UserID
+GROUP BY lu.firstname, lu.lastname;
+
+
 
 select lu.firstname, lu.lastname, mt.MembershipType, ast.ActivityStatus
 from LibraryUsers as lu
 left join MembershipTypeTable as mt on lu.MembershipTypeID = mt.MembershipTypeID
 left join ActivityStatusTable as ast on lu.ActivityStatusID = ast.ActivityStatusID;
 
+-- Retrieve firstname and lastname of users who are inactive ,specifically inactive so using Inner Join
 select lu.firstname, lu.lastname
 from LibraryUsers as lu
-join ActivityStatusTable as ast on lu.ActivityStatusID = ast.ActivityStatusID
+inner join ActivityStatusTable as ast on lu.ActivityStatusID = ast.ActivityStatusID
 where ast.ActivityStatus = 'inactive';
 
--- Using COUNT with GROUP BY for Active and Inactive Members
+-- Count the number of users for each activity status, includes both Active and Inactive Members from right outer 
 select ast.ActivityStatus, 
     COUNT(lu.UserID) AS NumberOfUsers
 from LibraryUsers AS lu
-JOIN ActivityStatusTable AS ast ON lu.ActivityStatusID = ast.ActivityStatusID
+RIGHT OUTER JOIN ActivityStatusTable AS ast ON lu.ActivityStatusID = ast.ActivityStatusID
 GROUP BY ast.ActivityStatus;
 
 select *
@@ -92,9 +116,19 @@ SELECT *
 FROM Books 
 WHERE BookID IN (2, 3, 4, 5);
 
+
+
+
+-- List all users and the books they have borrowed,including users who haven’t borrowed any books
+SELECT DISTINCT lu.firstname, lu.lastname, b.Title
+FROM LibraryUsers AS lu
+LEFT OUTER JOIN BorrowingBooks AS bb ON lu.UserID = bb.UserID
+LEFT OUTER JOIN Books AS b ON bb.BookID = b.BookID;
+
+
 -- Count the number of books in each category-join tables
 select c.CategoryName, count(b.BookId) as TotalBooks
 from Books as b
-join Categories c on c.CategoryID = b.CategoryID
+left outer join Categories c on c.CategoryID = b.CategoryID
 group by c.CategoryID
 order by TotalBooks desc;

@@ -78,19 +78,6 @@ CREATE TABLE BorrowStatus (
     StatusDescription VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE BorrowingBooks(
-	BorrowID INT PRIMARY KEY AUTO_INCREMENT,
-    BookID INT,
-    UserID INT,
-    BorrowDate DATETIME DEFAULT current_timestamp,
-    DueDate DATE AS (BorrowDate + INTERVAL 14 DAY) STORED,
-    ReturnDate DATE NULL,
-    StatusID INT, 
-    foreign key(BookID) references Books(BookID),
-    foreign key(UserID) references LibraryUsers(UserId),
-    foreign key(StatusID) references BorrowStatus(StatusID)
-    );
-
 CREATE TABLE FinesTable (
    FineId INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
    BorrowID INT NOT NULL,

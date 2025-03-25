@@ -3,20 +3,20 @@ USE librarydb;
 DELIMITER //
 
 CREATE PROCEDURE SendNotifications( IN p_UserID INT, 
-IN p_NotificationType VARCHAR(50), 
-IN p_Message TEXT)
+	IN p_NotificationType VARCHAR(50), 
+	IN p_Message TEXT)
 
 BEGIN    -- Create a notifications table if it doesn't exist    
-CREATE TABLE 
-IF NOT EXISTS Notifications (
+CREATE TABLE IF NOT EXISTS Notifications (
 	NotificationID INT PRIMARY KEY AUTO_INCREMENT,        
 	UserID INT,        
     NotificationType VARCHAR(50),        
     Message TEXT,        
     NotificationDate DATETIME DEFAULT CURRENT_TIMESTAMP,        
     IsRead BOOLEAN DEFAULT FALSE,        
-    FOREIGN KEY (UserID) REFERENCES LibraryUsers(UserID)); -- Insert notification    
+    FOREIGN KEY (UserID) REFERENCES LibraryUsers(UserID)); 
     
+    -- Insert into notification    
     INSERT INTO Notifications (UserID, NotificationType, Message)    
     VALUES (p_UserID, p_NotificationType, p_Message);
     
@@ -28,48 +28,32 @@ DELIMITER ;
 DELIMITER //
  
 CREATE PROCEDURE Borrowing_Books(
-
-    IN p_BookID INT,
+	IN p_BookID INT,
 	IN p_UserID INT
 )
-
 BEGIN
-
-    DECLARE available_count INT;
- 
-    -- Check if the book is available
-
-    SELECT CopiesAvailable INTO available_count
-
-    FROM Books
-
-    WHERE BookID = p_BookID
+	DECLARE available_count INT;
+	-- Check if the book is available
+	SELECT CopiesAvailable INTO available_count
+	FROM Books
+	WHERE BookID = p_BookID
 
     FOR UPDATE;  -- Locks the row to prevent race conditions
  
     IF available_count > 0 THEN
-
-        -- Insert the borrow record into the Borrow_Log table
-
-        INSERT INTO BorrowingBooks (BookID, UserID, BorrowDate)
-
-        VALUES (p_BookID, p_UserID, NOW());
- 
-        -- Decrease the available book count atomically
-
-        UPDATE Books
-
-        SET CopiesAvailable = CopiesAvailable - 1
-
-        WHERE BookID = p_BookID;
+		-- Insert the borrow record into the Borrow_Log table
+		INSERT INTO BorrowingBooks (BookID, UserID, BorrowDate)
+		VALUES (p_BookID, p_UserID, NOW());
+		
+        -- Decrease the available book count atomatically
+		UPDATE Books
+		SET CopiesAvailable = CopiesAvailable - 1
+		WHERE BookID = p_BookID;
  
     ELSE
-
-        -- Raise an error if no copies are available
-
-        SIGNAL SQLSTATE '45000'
-
-        SET MESSAGE_TEXT = 'No available copies for this book';
+		-- Raise an error if no copies are available
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'No available copies for this book';
 
     END IF;
 
@@ -100,6 +84,9 @@ END;
 //
  
 DELIMITER ;
+
+
+
 
 
  
