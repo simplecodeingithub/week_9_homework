@@ -61,6 +61,7 @@ END//
  
 DELIMITER ;
 
+
 DELIMITER //
  
 CREATE PROCEDURE PayFine(
@@ -80,14 +81,8 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Fine is already paid or does not exist.';
     END IF;
-END;
-//
+END//
  
 DELIMITER ;
 
-
-
-
-
- 
 

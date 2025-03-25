@@ -30,12 +30,10 @@ from BorrowingBooks;
 select *
 from FinesTable;
 
-
-
-
 SELECT * 
 FROM Notifications;
---------------------
+
+--
 
 SELECT * 
 FROM LibraryUsers 
@@ -61,16 +59,16 @@ SELECT *
 FROM BorrowingBooks 
 WHERE BorrowID IN (8, 11);
 
+-- To get the number of books borrowed by each user
+SELECT UserID, COUNT(BookID) AS BookCount
+FROM vBorrowedBooks
+GROUP BY UserID;
+
 -- Find how many users live in each city
 SELECT City, count(UserId) as TotalUsers
 FROM Address
 group by City
 order by TotalUsers asc;
-
--- Join LibraryUsers table with Address table to get address details
-select lu.firstname, lu.lastname, a.flatNo, a.street, a.city, a.postalcode 
-from LibraryUsers as lu
-right outer join Address as a on lu.UserID = a.UserId;
 
 -- get the user who is having more than one address
 SELECT lu.firstname, lu.lastname, COUNT(a.AddressID) AS AddressCount
@@ -80,12 +78,17 @@ GROUP BY lu.UserID, lu.firstname, lu.lastname
 HAVING COUNT(a.AddressID) > 1
 ORDER BY AddressCount DESC;
 
+-- Join LibraryUsers table with Address table to get address details
+select lu.firstname, lu.lastname, a.flatNo, a.street, a.city, a.postalcode 
+from LibraryUsers as lu
+right outer join Address as a on lu.UserID = a.UserId;
+
+
 -- Grouping by User to show only distinct users, even if they have multiple addresses
 SELECT lu.firstname, lu.lastname, COUNT(a.addressID) AS NumberOfAddresses
 FROM LibraryUsers AS lu
 RIGHT OUTER JOIN Address AS a ON lu.UserID = a.UserID
 GROUP BY lu.firstname, lu.lastname;
-
 
 
 select lu.firstname, lu.lastname, mt.MembershipType, ast.ActivityStatus

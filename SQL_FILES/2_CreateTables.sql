@@ -64,7 +64,7 @@ CREATE TABLE BorrowingBooks(
 	BorrowID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     BookID INT,
     UserID INT,
-    BorrowDate DATETIME DEFAULT current_timestamp,
+    BorrowDate DATETIME DEFAULT current_timestamp, -- Current Date
     DueDate DATE AS (BorrowDate + INTERVAL 14 DAY) STORED,
     ReturnDate DATE NULL,
     StatusID INT, 

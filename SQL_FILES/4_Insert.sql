@@ -70,6 +70,7 @@ VALUES(1, 1, '2025-03-21 10:00:00', NULL, 1),
 INSERT INTO BorrowingBooks(BookID, UserID, BorrowDate, ReturnDate, StatusID)
 VALUES (4, 1, '2025-02-20 10:00:00', NULL, 1);
 
+
 INSERT INTO FinesTable (BorrowID, due_date, return_date)
 VALUES
 (8, '2025-02-24', '2025-03-21'),  -- fine for borrowid 2,25 days overdue so 25 days * 0.5
@@ -77,3 +78,6 @@ VALUES
 
 INSERT INTO FinesTable (BorrowID, due_date, return_date)
 VALUES(17, '2025-02-24', '2025-03-20');
+
+INSERT INTO FinesTable (BorrowID, due_date, return_date, FineStatus)
+VALUES (17, '2025-02-24', '2025-03-20', 'unpaid');

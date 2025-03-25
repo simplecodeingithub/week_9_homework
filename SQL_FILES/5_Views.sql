@@ -28,14 +28,18 @@ SELECT
     bb.DueDate
 FROM BorrowingBooks bb
 INNER JOIN Books b ON bb.BookID = b.BookID
-INNER JOIN LibraryUsers lu ON lu.UserID = bb.UserID  -- Corrected join condition
+INNER JOIN LibraryUsers lu ON lu.UserID = bb.UserID  
 WHERE bb.ReturnDate IS NULL;
 
 select * from vBorrowedbooks;
 
--- To get the number of books borrowed by each user
-SELECT UserID, COUNT(BookID) AS BookCount
-FROM vBorrowedBooks
-GROUP BY UserID;
+
+
+CREATE VIEW BorrowingWithStatus AS
+SELECT bb.*, bs.StatusDescription
+FROM BorrowingBooks bb
+JOIN BorrowStatus bs ON bb.StatusID = bs.StatusID; -- inner join
+
+SELECT * FROM BorrowingWithStatus;
 
 
